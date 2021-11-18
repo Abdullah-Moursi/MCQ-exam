@@ -5,7 +5,7 @@ import Login from "./components/Login";
 import Result from "./components/Result";
 import Exam from "./components/Exam";
 
-export const ExamContext = React.createContext()
+export const ExamContext = React.createContext();
 
 export default function App() {
   const questions = [
@@ -17,6 +17,7 @@ export default function App() {
         { answerText: "Paris", isCorrect: true },
         { answerText: "Dublin", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "What is the capital of England?",
@@ -26,6 +27,7 @@ export default function App() {
         { answerText: "Paris", isCorrect: false },
         { answerText: "Dublin", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "What is the capital of USA?",
@@ -35,6 +37,7 @@ export default function App() {
         { answerText: "Paris", isCorrect: false },
         { answerText: "Dublin", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "How many atoms are in an Oxygen molecule?",
@@ -44,6 +47,7 @@ export default function App() {
         { answerText: "2", isCorrect: true },
         { answerText: "1", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "Who is CEO of Tesla?",
@@ -53,6 +57,7 @@ export default function App() {
         { answerText: "Bill Gates", isCorrect: false },
         { answerText: "Tony Stark", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "The iPhone was created by which company?",
@@ -62,6 +67,7 @@ export default function App() {
         { answerText: "Amazon", isCorrect: false },
         { answerText: "Microsoft", isCorrect: false },
       ],
+      answered: false,
     },
     {
       questionText: "How many Harry Potter books are there?",
@@ -71,12 +77,17 @@ export default function App() {
         { answerText: "6", isCorrect: false },
         { answerText: "7", isCorrect: true },
       ],
+      answered: false,
     },
   ];
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
+  const [isQuestionAnswered, setIsQuestionAnswered] = useState({});
+
+  let shuffledQuestions =
+    questions[Math.floor(Math.random() * questions.length)];
 
   const handleAnswerOptionClick = (isCorrect) => {
     if (isCorrect) {
@@ -90,8 +101,13 @@ export default function App() {
       setShowScore(true);
     }
   };
+
   return (
     <Router>
+      <ExamContext.Provider>
+        <Result />
+        <Exam />
+      </ExamContext.Provider>
       <div className="app">
         <ul>
           <Link to="/">
@@ -108,9 +124,9 @@ export default function App() {
         </ul>
 
         <Routes>
-          <Route exact path="/" element={<Login/>} />
-          <Route exact path="/result" element={<Result/>} />
-          <Route exact path="/exam" element={<Exam/>} />
+          <Route exact path="/" element={<Login />} />
+          <Route exact path="/result" element={<Result />} />
+          <Route exact path="/exam" element={<Exam />} />
         </Routes>
 
         {showScore ? (
@@ -123,28 +139,28 @@ export default function App() {
               <div className="question-count">
                 <span>Question {currentQuestion + 1}</span>/{questions.length}
               </div>
-              <div className="question-text">
-                {questions[currentQuestion].questionText}
+              {!shuffledQuestions.answered && (
+                <div className="question-text">
+                  {shuffledQuestions.questionText}
+                </div>
+              )}
+            </div>
+            {!shuffledQuestions.answered && (
+              <div className="answer-section">
+                {shuffledQuestions.answerOptions.map((answerOption) => (
+                  <button
+                    onClick={() =>
+                      handleAnswerOptionClick(answerOption.isCorrect)
+                    }
+                  >
+                    {answerOption.answerText}
+                  </button>
+                ))}
               </div>
-            </div>
-            <div className="answer-section">
-              {questions[currentQuestion].answerOptions.map((answerOption) => (
-                <button
-                  onClick={() =>
-                    handleAnswerOptionClick(answerOption.isCorrect)
-                  }
-                >
-                  {answerOption.answerText}
-                </button>
-              ))}
-            </div>
+            )}
           </>
         )}
       </div>
-      <ExamContext.Provider value={questions}>
-        <Result/>
-        <Exam/>
-      </ExamContext.Provider>
     </Router>
   );
 }
