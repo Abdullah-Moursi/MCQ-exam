@@ -8,7 +8,7 @@ const Login = () => {
     e.preventDefault();
     setTimeout(() => {
       navigate("/exam");
-    }, 2000);
+    }, 1000);
   };
 
   return (
