@@ -1,14 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {  useState } from "react";
 import "../App.css";
 import Result from "./Result";
 
 export const ScoreContext = React.createContext();
 
-// import { ExamContext } from '../App';
-
 const Exam = () => {
-  const questions = [
+  const data = [
     {
       questionText: "What is the capital of France?",
       answerOptions: [
@@ -80,18 +77,27 @@ const Exam = () => {
       answered: false,
     },
   ];
-  // const questions = useContext(ExamContext)
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
   const [isQuestionAnswered, setIsQuestionAnswered] = useState(null);
+  const [questions, setQuestions] = useState(data);
 
-  let navigate = useNavigate();
 
   const shuffledQuestions =
     questions[Math.floor(Math.random() * questions.length)];
 
-  const handleAnswerOptionClick = (isCorrect) => {
+  const handleAnswerOptionClick = (isCorrect, el) => {
+    setQuestions(questions.map((e) => {
+        if (e === el) {
+            return {
+                ...e,
+                answered: true
+            };
+        }
+        return e;
+    }));
+    console.log(questions, shuffledQuestions)
     if (isCorrect) {
       setScore(score + 1);
     }
@@ -117,29 +123,32 @@ const Exam = () => {
             </>
           </div>
         ) : (
-          <>
-            <div className="question-section">
-              <div className="question-count">
-                <span>Question {currentQuestion + 1}</span>/{questions.length}
+          !shuffledQuestions.answered && (
+            <>
+              <div className="question-section">
+                <div className="question-count">
+                  <span>Question {currentQuestion + 1}</span>/{questions.length}
+                </div>
+                <div className="question-text">
+                  {shuffledQuestions.questionText}
+                </div>
               </div>
-              <div className="question-text">
-                {shuffledQuestions.questionText}
+              <div className="answer-section">
+                {shuffledQuestions.answerOptions.map((answerOption) => (
+                  <button
+                    key={Math.random() * 100}
+                    onClick={() =>
+                      handleAnswerOptionClick(answerOption.isCorrect, shuffledQuestions)
+                    }
+                  >
+                    {answerOption.answerText}
+                  </button>
+                ))}
               </div>
-            </div>
-            <div className="answer-section">
-              {shuffledQuestions.answerOptions.map((answerOption) => (
-                <button
-                  key={Math.random() * 100}
-                  onClick={() =>
-                    handleAnswerOptionClick(answerOption.isCorrect)
-                  }
-                >
-                  {answerOption.answerText}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
+            </>
+          )
+        )  
+        }
       </div>
     </>
   );
