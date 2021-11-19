@@ -80,7 +80,7 @@ const Exam = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
-  const [isQuestionAnswered, setIsQuestionAnswered] = useState(null);
+  const [isQuestionAnswered, setIsQuestionAnswered] = useState({});
   const [questions, setQuestions] = useState(data);
 
 
@@ -88,6 +88,9 @@ const Exam = () => {
     questions[Math.floor(Math.random() * questions.length)];
 
   const handleAnswerOptionClick = (isCorrect, el) => {
+      if (!shuffledQuestions.answered) {
+          setIsQuestionAnswered(shuffledQuestions)
+      }
     setQuestions(questions.map((e) => {
         if (e === el) {
             return {
@@ -123,7 +126,7 @@ const Exam = () => {
             </>
           </div>
         ) : (
-          !shuffledQuestions.answered && (
+          !isQuestionAnswered.answered && (
             <>
               <div className="question-section">
                 <div className="question-count">
