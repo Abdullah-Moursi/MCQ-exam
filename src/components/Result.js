@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ScoreContext } from './Exam';
 
 const Result = () => {
+ const score = useContext(ScoreContext)
+ console.log(score)
+
     return (
         <div>
-            result
+           You scored {score} %
         </div>
     )
 }
